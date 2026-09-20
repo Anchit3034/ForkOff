@@ -1,9 +1,31 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include<unistd.h>
 
 
 char command[1024];
+
+void handle_type(char const* cmd){
+
+	if (!strcmp(cmd,"echo") || !strcmp(cmd,"exit") || !strcmp(cmd,"type")){
+			printf("%s is the shell builtin\n",cmd);
+			return;
+	}
+	char *PATH=strdup(getenv("PATH"));
+	for(char *p=strtok(PATH,":");p!=NULL;p=strtok(NULL,":")){
+		char fp[1028];
+		sprintf(fp,"%s/%s",p,cmd);
+		if(access(fp,X_OK)==0){
+			printf("%s is %s\n",cmd,fp);
+			return;
+		}
+	}
+	printf("%s is not a command\n",cmd);
+}
+
+
+
 int main(void){
 
 	setbuf(stdout,NULL);
@@ -14,6 +36,7 @@ int main(void){
 		fgets(command,sizeof(command),stdin);
 
 		command[strcspn(command,"\n")]='\0';
+		
 		if(strcmp(command,"exit")==0){
 			break;
 		
@@ -21,11 +44,8 @@ int main(void){
 			printf("%s\n",command+5);
 		}
 		else if(strncmp(command,"type ",5)==0){
-			if(!strcmp(command+5,"echo") || !strcmp(command+5,"exit") || !strcmp(command+5,"type")){
-				printf("%s: is the inbuilt command in shell\n",command+5);
-			}else{
-				printf("%s: invalid command\n",command+5);
-			}
+			handle_type(command+5);
+		
 		}
 		else{
 			printf("%s: command not found\n",command);
