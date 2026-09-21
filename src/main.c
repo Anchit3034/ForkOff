@@ -9,8 +9,6 @@ char command[1024];
 char buffer[512];
 
 
-
-
 int find_path(char *command,int type){
 	char *PATH = strdup(getenv("PATH"));
 	int found=0;
@@ -38,8 +36,6 @@ void handle_type(char *cmd){
 	}
 	find_path(cmd,1);	
 }
-
-
 
 int main(void){
 
@@ -75,6 +71,7 @@ int main(void){
 		}
 		else if(strncmp(command,"cd ",3)==0){
 			char *s=command+3;
+			if(strcmp(s,"~")==0) s="/home";
 			if(chdir(s)==0);
 			else{
 				printf("cd: %s: No such file or directory\n",s);
