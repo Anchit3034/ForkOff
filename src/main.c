@@ -71,7 +71,7 @@ int main(void){
 		}
 		else if(strncmp(command,"cd ",3)==0){
 			char *s=command+3;
-			if(strcmp(s,"~")==0) s="/home";
+			if(strcmp(s,"~")==0) s=getenv("HOME");
 			if(chdir(s)==0);
 			else{
 				printf("cd: %s: No such file or directory\n",s);
