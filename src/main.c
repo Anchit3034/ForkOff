@@ -9,6 +9,9 @@
 char command[1024];
 char buffer[512];
 
+
+
+
 int find_path(char *command,int type){
 	char *PATH = strdup(getenv("PATH"));
 	int found=0;
@@ -30,7 +33,7 @@ int find_path(char *command,int type){
 }
 void handle_type(char *cmd){
 
-	if (!strcmp(cmd,"echo") || !strcmp(cmd,"exit") || !strcmp(cmd,"type")){
+	if (!strcmp(cmd,"echo") || !strcmp(cmd,"exit") || !strcmp(cmd,"type") || !strcmp(cmd,"pwd")){
 			printf("%s is a shell builtin\n",cmd);
 			return;
 	}
@@ -57,10 +60,21 @@ int main(void){
 		}else if(strncmp(command,"echo ",5)==0){
 			printf("%s\n",command+5);
 		}
+		else if(strcmp(command,"pwd")==0){
+			char cwd[1024];
+			if(getcwd(cwd,sizeof(cwd))!=NULL){
+				printf("%s\n",cwd);
+
+			}
+			else{
+				perror("Getcwd() error");
+			}
+		}
 		else if(strncmp(command,"type ",5)==0){
 			handle_type(command+5);
 		
 		}
+
 		else{
 
 			char *temp=strtok(command," ");
