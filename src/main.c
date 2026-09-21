@@ -4,7 +4,6 @@
 #include<unistd.h>
 #include<sys/wait.h>
 
-#define TAB_SIZE 52
 
 char command[1024];
 char buffer[512];
@@ -33,7 +32,7 @@ int find_path(char *command,int type){
 }
 void handle_type(char *cmd){
 
-	if (!strcmp(cmd,"echo") || !strcmp(cmd,"exit") || !strcmp(cmd,"type") || !strcmp(cmd,"pwd")){
+	if (!strcmp(cmd,"echo") || !strcmp(cmd,"exit") || !strcmp(cmd,"type") || !strcmp(cmd,"pwd") || !strcmp(cmd,"cd")){
 			printf("%s is a shell builtin\n",cmd);
 			return;
 	}
@@ -73,6 +72,13 @@ int main(void){
 		else if(strncmp(command,"type ",5)==0){
 			handle_type(command+5);
 		
+		}
+		else if(strncmp(command,"cd ",3)==0){
+			char *s=command+3;
+			if(chdir(s)==0);
+			else{
+				printf("cd: %s: No such file or directory\n",s);
+			}
 		}
 
 		else{
