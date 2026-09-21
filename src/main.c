@@ -4,26 +4,37 @@
 #include<unistd.h>
 #include<sys/wait.h>
 
+#define TAB_SIZE 52
+
 char command[1024];
+char buffer[512];
 
+int find_path(char *command,int type){
+	char *PATH = strdup(getenv("PATH"));
+	int found=0;
 
-void handle_type(char const* cmd){
+	for(char *p=strtok(PATH,":");p!=NULL;p=strtok(NULL,":")){
+		sprintf(buffer,"%s/%s",p,command);
+		if(access(buffer,X_OK)==0){
+			found=1;
+			break;
+		}
+	}
+	free(PATH);
+	if(found && type){
+		printf("%s is %s\n",command,buffer);
+	}else if(type){
+		printf("%s: not found\n",command);
+	}
+	return found;
+}
+void handle_type(char *cmd){
 
 	if (!strcmp(cmd,"echo") || !strcmp(cmd,"exit") || !strcmp(cmd,"type")){
 			printf("%s is a shell builtin\n",cmd);
 			return;
 	}
-	
-	char *PATH=strdup(getenv("PATH"));
-	for(char *p=strtok(PATH,":");p!=NULL;p=strtok(NULL,":")){
-		char fp[1028];
-		sprintf(fp,"%s/%s",p,cmd);
-		if(access(fp,X_OK)==0){
-			printf("%s is %s\n",cmd,fp);
-			return;
-		}
-	}
-	printf("%s: not found\n",cmd);
+	find_path(cmd,1);	
 }
 
 
@@ -33,7 +44,7 @@ int main(void){
 	setbuf(stdout,NULL);
 
 	while(1){
-l1:
+
 		
 		printf("$ ");
 		fgets(command,sizeof(command),stdin);
@@ -52,34 +63,38 @@ l1:
 		}
 		else{
 
-			char *PATH=strdup(getenv("PATH"));
-			for(char *p=strtok(PATH,":");p!=NULL;p=strtok(NULL,":")){
-				char fp[1028];
-				sprintf(fp,"%s/%s",p,command);
-				if(access(fp,X_OK)==0){
-					pid_t pid = fork();
-					if(pid<0){
-						perror("Fork failed");
-						return 1;
-					}
-					if(pid==0){
-						
-						char *args[]={command,NULL};
-						
-						execv(fp,args);
-
-						perror("Exev failed");
-						exit(1);
-					}
-					int status;
-					waitpid(pid,&status,0);
-
-						
-					goto l1;
+			char *temp=strtok(command," ");
+			char *table[51];
+			int count=0;
+			while(temp!=NULL){
+				table[count]=temp;
+				count++;
+				if(count >= 50){
+					break;
 				}
+				temp=strtok(NULL," ");
 			}
-			printf("%s: command not found\n",command);
-		}
+			table[count]=NULL;
+
+			if(find_path(table[0],0)){
+				pid_t pid = fork();
+				if(pid<0){
+					perror("Fork failed");
+					exit(1);
+				}
+				if(pid==0){
+					execv(buffer,table);
+
+					perror("Execv failed");
+					exit(1);
+				}
+				int status;
+				waitpid(pid,&status,0);					
+			}
+			else{
+				printf("%s: command not found\n",command);
+			}		
+		}			
 	}
 	return 0;
 }
