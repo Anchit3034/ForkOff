@@ -9,6 +9,25 @@ char command[1024];
 char buffer[512];
 
 
+typedef enum{
+	echo=0,
+	ex_it,
+	cd,
+	pwd,
+	type,
+	de_fault
+}COMMAND;
+
+COMMAND command_to_emun(char *str){
+	if(strncmp(str,"echo ",5)==0) return echo;
+	if(strcmp(str,"exit")==0) return ex_it;
+	if(strncmp(str,"cd ",3)==0) return cd;
+	if(strncmp(str,"type ",5)==0) return type;
+	if(strcmp(str,"pwd")==0) return pwd;
+	return de_fault;
+}
+
+
 int find_path(char *command,int type){
 	char *PATH = strdup(getenv("PATH"));
 	int found=0;
@@ -49,69 +68,64 @@ int main(void){
 
 		command[strcspn(command,"\n")]='\0';
 		
-		if(strcmp(command,"exit")==0){
-			break;
-		
-		}else if(strncmp(command,"echo ",5)==0){
-			printf("%s\n",command+5);
-		}
-		else if(strcmp(command,"pwd")==0){
-			char cwd[1024];
-			if(getcwd(cwd,sizeof(cwd))!=NULL){
-				printf("%s\n",cwd);
-
-			}
-			else{
-				perror("Getcwd() error");
-			}
-		}
-		else if(strncmp(command,"type ",5)==0){
-			handle_type(command+5);
-		
-		}
-		else if(strncmp(command,"cd ",3)==0){
-			char *s=command+3;
-			if(strcmp(s,"~")==0) s=getenv("HOME");
-			if(chdir(s)==0);
-			else{
-				printf("cd: %s: No such file or directory\n",s);
-			}
-		}
-
-		else{
-
-			char *temp=strtok(command," ");
-			char *table[51];
-			int count=0;
-			while(temp!=NULL){
-				table[count]=temp;
-				count++;
-				if(count >= 50){
-					break;
+		COMMAND cmd = command_to_emun(command);
+		switch(cmd){
+			case ex_it:
+				goto l1;
+			case echo:
+				printf("%s\n",command+5);
+				break;
+			case pwd:
+				char cwd[1024];
+				if(getcwd(cwd,sizeof(cwd))!=NULL) printf("%s\n",cwd);
+				else perror("getcwd error");
+				break;
+			case type:
+				handle_type(command+5);
+				break;
+			case cd:
+				char *s=command+3;
+				if(strcmp(s,"~")==0) s=getenv("HOME");
+				if(chdir(s)==0);
+				else printf("cd: %s: No such file or directory\n",s);
+				break;
+			default:
+				char *temp=strtok(command," ");
+				char *table[51];
+				int count=0;
+				while(temp!=NULL){
+					table[count]=temp;
+					count++;
+					if(count >= 50) break;
+					temp=strtok(NULL," ");
 				}
-				temp=strtok(NULL," ");
-			}
-			table[count]=NULL;
+				table[count]=NULL;
 
-			if(find_path(table[0],0)){
-				pid_t pid = fork();
-				if(pid<0){
-					perror("Fork failed");
-					exit(1);
-				}
-				if(pid==0){
-					execv(buffer,table);
+				if(find_path(table[0],0)){
+					pid_t pid = fork();
+					if(pid<0){
+						perror("Forked failed\n");
+						exit(1);
+					}
+					if(pid==0){
+						execv(buffer,table);
 
-					perror("Execv failed");
-					exit(1);
+						perror("Execv failed");
+						exit(1);
+					}
+				
+					int status;
+					waitpid(pid,&status,0);					
 				}
-				int status;
-				waitpid(pid,&status,0);					
-			}
-			else{
-				printf("%s: command not found\n",command);
-			}		
-		}			
+				else{
+					printf("%s: command not found\n",command);
+				}
+				break;
+		}
+
+
+			
 	}
+l1:
 	return 0;
 }
