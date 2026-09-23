@@ -66,7 +66,10 @@ void print_echo(char *input){
 			is_single_quotes = !is_single_quotes;
 			continue;
 		}
-		if (is_single_quotes) putchar(curr);
+		if (is_single_quotes){
+			putchar(curr);
+			count=0;
+		}
 		else{
 			if (curr!=' ' && curr!='\t'){
 				putchar(curr);
