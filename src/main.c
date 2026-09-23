@@ -3,6 +3,7 @@
 #include<string.h>
 #include<unistd.h>
 #include<sys/wait.h>
+#include<stdint.h>
 
 
 char command[1024];
@@ -47,14 +48,43 @@ int find_path(char *command,int type){
 	}
 	return found;
 }
-void handle_type(char *cmd){
 
+void handle_type(char *cmd){
 	if (!strcmp(cmd,"echo") || !strcmp(cmd,"exit") || !strcmp(cmd,"type") || !strcmp(cmd,"pwd") || !strcmp(cmd,"cd")){
 			printf("%s is a shell builtin\n",cmd);
 			return;
 	}
 	find_path(cmd,1);	
 }
+
+void print_echo(char *input){
+	bool is_single_quotes=false;
+	uint8_t count=0;
+	for(int i=0;input[i]!='\0';i++){
+		char curr=input[i];
+		if(curr=='\''){
+			is_single_quotes = !is_single_quotes;
+			continue;
+		}
+		if (is_single_quotes) putchar(curr);
+		else{
+			if (curr!=' ' && curr!='\t'){
+				putchar(curr);
+				count=0;
+			}
+			else{
+				if(count==0){
+					putchar(' ');
+					count=1;
+				}
+			}
+		}
+	}
+	putchar('\n');
+
+}
+
+
 
 int main(void){
 
@@ -73,7 +103,7 @@ int main(void){
 			case ex_it:
 				goto l1;
 			case echo:
-				printf("%s\n",command+5);
+				print_echo(command+5);
 				break;
 			case pwd:
 				char cwd[1024];
