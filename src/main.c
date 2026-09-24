@@ -60,8 +60,17 @@ void handle_type(char *cmd){
 void print_echo(char *input){
 	bool is_single_quotes=false;
 	uint8_t count=0;
+	bool is_double_quotes=false;
 	for(int i=0;input[i]!='\0';i++){
 		char curr=input[i];
+		if (curr=='\"'){
+			is_double_quotes = !is_double_quotes;
+			continue;
+		}
+		if (is_double_quotes){
+			putchar(curr);
+			continue;
+		}
 		if(curr=='\''){
 			is_single_quotes = !is_single_quotes;
 			continue;
