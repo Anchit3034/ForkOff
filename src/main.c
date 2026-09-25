@@ -19,6 +19,15 @@ typedef enum{
 	de_fault
 }COMMAND;
 
+typedef enum{
+	normal=0,
+	single_q,
+	double_q,
+	backslash
+}QUOTING;
+
+
+
 COMMAND command_to_emun(char *str){
 	if(strncmp(str,"echo ",5)==0) return echo;
 	if(strcmp(str,"exit")==0) return ex_it;
@@ -28,7 +37,12 @@ COMMAND command_to_emun(char *str){
 	return de_fault;
 }
 
-
+QUOTING quote_to_enum(char str){
+	if(str=='\'') return single_q;
+	else if(str=='\"') return double_q;
+	else if(str=='\\') return backslash;
+	return normal;
+}
 int find_path(char *command,int type){
 	char *PATH = strdup(getenv("PATH"));
 	int found=0;
@@ -62,47 +76,42 @@ void print_echo(char *input){
 	uint8_t count=0;
 	bool is_double_quotes=false;
 	bool is_backslash=false;
+	
 	for(int i=0;input[i]!='\0';i++){
 		char curr=input[i];
-		if(curr=='\\'){
-			is_backslash=true;
-
-			continue;
-		}
-		if(is_backslash){
+		if((is_single_quotes && curr!='\'') || (is_double_quotes && curr!='\"') || (is_backslash )){
 			putchar(curr);
 			is_backslash=false;
 			continue;
 		}
-		if (curr=='\"'){
-			is_double_quotes = !is_double_quotes;
-			continue;
-		}
-		if (is_double_quotes){
-			putchar(curr);
-			continue;
-		}
-		if(curr=='\''){
-			is_single_quotes = !is_single_quotes;
-			continue;
-		}
-		if (is_single_quotes){
-			putchar(curr);
-			count=0;
-		}
-		else{
-			if (curr!=' ' && curr!='\t'){
-				putchar(curr);
-				count=0;
-			}
-			else{
-				if(count==0){
-					putchar(' ');
-					count=1;
+		QUOTING quote = quote_to_enum(curr);
+
+		switch(quote){
+			case single_q:
+				is_single_quotes = !is_single_quotes;
+				break;
+			case double_q:
+				is_double_quotes = !is_double_quotes;
+				break;
+			case backslash:
+				is_backslash=true;
+				break;
+			default:
+				if (curr!=' ' && curr!='\t'){
+					putchar(curr);
+					count=0;
+				}else{
+					if(count==0){
+						putchar(' ');
+						count=1;
+					}
 				}
-			}
+				break;
 		}
-	}
+
+	}		
+
+		
 	putchar('\n');
 
 }
