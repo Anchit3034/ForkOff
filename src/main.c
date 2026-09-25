@@ -61,8 +61,19 @@ void print_echo(char *input){
 	bool is_single_quotes=false;
 	uint8_t count=0;
 	bool is_double_quotes=false;
+	bool is_backslash=false;
 	for(int i=0;input[i]!='\0';i++){
 		char curr=input[i];
+		if(curr=='\\'){
+			is_backslash=true;
+
+			continue;
+		}
+		if(is_backslash){
+			putchar(curr);
+			is_backslash=false;
+			continue;
+		}
 		if (curr=='\"'){
 			is_double_quotes = !is_double_quotes;
 			continue;
