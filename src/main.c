@@ -43,22 +43,37 @@ QUOTING quote_to_enum(char str){
 	else if(str=='\\') return backslash;
 	return normal;
 }
-int find_path(char *command,int type){
-	char *PATH = strdup(getenv("PATH"));
-	int found=0;
 
-	for(char *p=strtok(PATH,":");p!=NULL;p=strtok(NULL,":")){
-		sprintf(buffer,"%s/%s",p,command);
-		if(access(buffer,X_OK)==0){
-			found=1;
-			break;
-		}
+
+void curr_work_dir(int type, char *command);
+
+void remove_quotes(char *str);
+
+int find_path(char *command,int type){
+	
+	int found=0;
+	if(command[0]=='\'' || command[0]=='\"'){
+		remove_quotes(command);
+		curr_work_dir(0,command);
+		found=1;
 	}
-	free(PATH);
-	if(found && type){
-		printf("%s is %s\n",command,buffer);
-	}else if(type){
-		printf("%s: not found\n",command);
+	else{
+
+		char *PATH = strdup(getenv("PATH"));
+
+		for(char *p=strtok(PATH,":");p!=NULL;p=strtok(NULL,":")){
+			sprintf(buffer,"%s/%s",p,command);
+			if(access(buffer,X_OK)==0){
+				found=1;
+				break;
+			}
+		}
+		free(PATH);
+		if(found && type){
+			printf("%s is %s\n",command,buffer);
+		}else if(type){
+			printf("%s: not found\n",command);
+		}
 	}
 	return found;
 }
@@ -116,6 +131,27 @@ void print_echo(char *input){
 
 }
 
+void curr_work_dir(int type, char *command){
+	char cwd[256];
+	if((getcwd(cwd,sizeof(cwd))!=NULL) && type==1) printf("%s\n",cwd);
+	else if(type==0) sprintf(buffer,"%s/%s",cwd,command);
+	else perror("getcwd error");
+}
+
+
+void remove_quotes(char *str){
+	uint8_t i=0;
+	uint8_t j=0;
+
+	while(str[i]!='\0'){
+		if(str[i] != '\'' && str[i] != '\"'){
+			str[j++] = str[i];
+		}
+		i++;
+	}
+	str[j]='\0';
+}
+
 
 
 int main(void){
@@ -138,9 +174,7 @@ int main(void){
 				print_echo(command+5);
 				break;
 			case pwd:
-				char cwd[1024];
-				if(getcwd(cwd,sizeof(cwd))!=NULL) printf("%s\n",cwd);
-				else perror("getcwd error");
+				curr_work_dir(0,NULL);
 				break;
 			case type:
 				handle_type(command+5);
@@ -162,7 +196,6 @@ int main(void){
 					temp=strtok(NULL," ");
 				}
 				table[count]=NULL;
-
 				if(find_path(table[0],0)){
 					pid_t pid = fork();
 					if(pid<0){
