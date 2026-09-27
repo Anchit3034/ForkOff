@@ -1,0 +1,5 @@
+a.out
+main.c
+new_text.txt
+text2.txt
+text.txt

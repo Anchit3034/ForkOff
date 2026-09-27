@@ -4,6 +4,7 @@
 #include<unistd.h>
 #include<sys/wait.h>
 #include<stdint.h>
+#include<ctype.h>
 
 
 char command[1024];
@@ -86,45 +87,77 @@ void handle_type(char *cmd){
 	find_path(cmd,1);	
 }
 
+void trim_space(char *str){
+	char *start = str;
+	while(isspace((unsigned char)*start)) start++;
+	if(start!=str) memmove(str,start,strlen(start)+1);
+
+	int len=strlen(str);
+	while(len>0 && isspace((unsigned char)str[len-1])){
+		str[len-1]='\0';
+		len--;
+	}
+}
+
 void print_echo(char *input){
 	bool is_single_quotes=false;
 	uint8_t count=0;
 	bool is_double_quotes=false;
 	bool is_backslash=false;
-	
-	for(int i=0;input[i]!='\0';i++){
-		char curr=input[i];
-		if((is_single_quotes && curr!='\'') || (is_double_quotes && curr!='\"') || (is_backslash )){
-			putchar(curr);
-			is_backslash=false;
-			continue;
-		}
-		QUOTING quote = quote_to_enum(curr);
 
-		switch(quote){
-			case single_q:
-				is_single_quotes = !is_single_quotes;
-				break;
-			case double_q:
-				is_double_quotes = !is_double_quotes;
-				break;
-			case backslash:
-				is_backslash=true;
-				break;
-			default:
-				if (curr!=' ' && curr!='\t'){
-					putchar(curr);
-					count=0;
-				}else{
-					if(count==0){
-						putchar(' ');
-						count=1;
+	char *redirect_ptr = strchr(input,'>');
+	if(redirect_ptr != NULL){
+		char *filename = redirect_ptr + 1;
+
+		trim_space(filename);
+		FILE *fptr = fopen(filename,"w");
+		if(fptr==NULL){
+			perror("error redirecting stdout");
+			return;
+		}
+		int8_t ch=0;
+		while(input[ch]!='>'){
+			fputc(input[ch],fptr);
+			ch++;
+		}
+		fclose(fptr);
+
+	}else{
+
+		for(int i=0;input[i]!='\0';i++){
+			char curr=input[i];
+			if((is_single_quotes && curr!='\'') || (is_double_quotes && curr!='\"') || (is_backslash )){
+				putchar(curr);
+				is_backslash=false;
+				continue;
+			}
+			QUOTING quote = quote_to_enum(curr);
+
+			switch(quote){
+				case single_q:
+					is_single_quotes = !is_single_quotes;
+					break;
+				case double_q:
+					is_double_quotes = !is_double_quotes;
+					break;
+				case backslash:
+					is_backslash=true;
+					break;
+				default:
+					if (curr!=' ' && curr!='\t'){
+						putchar(curr);
+						count=0;
+					}else{
+						if(count==0){
+							putchar(' ');
+							count=1;
+						}
 					}
-				}
-				break;
-		}
+					break;
+			}
 
-	}		
+		}
+	}
 
 		
 	putchar('\n');
