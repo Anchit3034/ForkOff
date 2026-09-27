@@ -52,7 +52,7 @@ void remove_quotes(char *str);
 int find_path(char *command,int type){
 	
 	int found=0;
-	if(command[0]=='\'' || command[0]=='\"'){
+	if(command[0]=='\'' || command[0]=='\"' || command[0]=='%'){
 		remove_quotes(command);
 		curr_work_dir(0,command);
 		found=1;
@@ -144,7 +144,7 @@ void remove_quotes(char *str){
 	uint8_t j=0;
 
 	while(str[i]!='\0'){
-		if(str[i] != '\'' && str[i] != '\"'){
+		if(str[i] != '\'' && str[i] != '\"' && str[i]!='%'){
 			str[j++] = str[i];
 		}
 		i++;
