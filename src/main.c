@@ -157,10 +157,12 @@ void print_echo(char *input){
 			}
 
 		}
+		putchar('\n');
+
 	}
 
 		
-	putchar('\n');
+	
 
 }
 
