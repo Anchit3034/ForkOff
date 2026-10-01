@@ -1,1 +1,4 @@
-hello world i am unhappy
+a.out
+main.c
+text2.txt
+text.txt

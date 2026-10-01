@@ -99,6 +99,23 @@ void trim_space(char *str){
 	}
 }
 
+void file_redir(char *filename,char *input){
+	
+
+	trim_space(filename);
+	FILE *fptr = fopen(filename,"a");
+	if(fptr==NULL){
+		perror("error redirecting stdout");
+		return;
+	}
+	int8_t ch=0;
+	while(input[ch]!='>'){
+		fputc(input[ch],fptr);
+		ch++;
+	}
+	fclose(fptr);
+}
+
 void print_echo(char *input){
 	bool is_single_quotes=false;
 	uint8_t count=0;
@@ -107,20 +124,8 @@ void print_echo(char *input){
 
 	char *redirect_ptr = strchr(input,'>');
 	if(redirect_ptr != NULL){
-		char *filename = redirect_ptr + 1;
 
-		trim_space(filename);
-		FILE *fptr = fopen(filename,"w");
-		if(fptr==NULL){
-			perror("error redirecting stdout");
-			return;
-		}
-		int8_t ch=0;
-		while(input[ch]!='>'){
-			fputc(input[ch],fptr);
-			ch++;
-		}
-		fclose(fptr);
+		if(strchr(redirect_ptr-1,'1')!=NULL) file_redir(redirect_ptr+1,input);
 
 	}else{
 
