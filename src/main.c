@@ -104,6 +104,7 @@ void file_redir(char *filename,char *input){
 
 	trim_space(filename);
 	FILE *fptr = fopen(filename,"a");
+
 	if(fptr==NULL){
 		perror("error redirecting stdout");
 		return;
@@ -125,7 +126,7 @@ void print_echo(char *input){
 	char *redirect_ptr = strchr(input,'>');
 	if(redirect_ptr != NULL){
 
-		if(strchr(redirect_ptr-1,'1')!=NULL) file_redir(redirect_ptr+1,input);
+		file_redir(redirect_ptr+1,input);
 
 	}else{
 
