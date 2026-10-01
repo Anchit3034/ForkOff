@@ -110,7 +110,13 @@ void file_redir(char *filename,char *input){
 		return;
 	}
 	int8_t ch=0;
+
+	fputc('\n',fptr);
 	while(input[ch]!='>'){
+		if(input[ch]=='1' && input[ch+1]=='>'){
+			ch++;
+			continue;
+		}
 		fputc(input[ch],fptr);
 		ch++;
 	}
@@ -124,8 +130,8 @@ void print_echo(char *input){
 	bool is_backslash=false;
 
 	char *redirect_ptr = strchr(input,'>');
-	if(redirect_ptr != NULL){
 
+	if(redirect_ptr != NULL){
 		file_redir(redirect_ptr+1,input);
 
 	}else{
