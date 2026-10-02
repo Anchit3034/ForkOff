@@ -21,6 +21,11 @@ typedef enum{
 }COMMAND;
 
 typedef enum{
+	error=0,
+	std_out,
+}REDIR;
+
+typedef enum{
 	normal=0,
 	single_q,
 	double_q,
@@ -110,16 +115,15 @@ void file_redir(char *filename,char *input){
 		return;
 	}
 	int8_t ch=0;
-	int16_t check=fgetc(fptr);
-	if(check==EOF);
-	else fputc('\n',fptr);
-	while(input[ch]!='>' && strcmp(input,"1>")){
+	while(input[ch]!='>'){
 		if(input[ch]=='1' && input[ch+1]=='>'){
 			ch++;
 			continue;
 		}
 		fputc(input[ch++],fptr);
 	}
+
+	fputc('\n',fptr);
 	fclose(fptr);
 	
 }
@@ -212,7 +216,7 @@ int main(void){
 l2:		
 		printf("$ ");
 		fgets(command,sizeof(command),stdin);
-		if(command[0]=='\0' || command[0]=='\n') goto l2;
+		if(command[0]=='\n') goto l2;
 
 		command[strcspn(command,"\n")]='\0';
 		
