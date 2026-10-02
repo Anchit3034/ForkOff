@@ -110,17 +110,18 @@ void file_redir(char *filename,char *input){
 		return;
 	}
 	int8_t ch=0;
-
-	fputc('\n',fptr);
-	while(input[ch]!='>'){
+	int16_t check=fgetc(fptr);
+	if(check==EOF);
+	else fputc('\n',fptr);
+	while(input[ch]!='>' && strcmp(input,"1>")){
 		if(input[ch]=='1' && input[ch+1]=='>'){
 			ch++;
 			continue;
 		}
-		fputc(input[ch],fptr);
-		ch++;
+		fputc(input[ch++],fptr);
 	}
 	fclose(fptr);
+	
 }
 
 void print_echo(char *input){
@@ -133,6 +134,7 @@ void print_echo(char *input){
 
 	if(redirect_ptr != NULL){
 		file_redir(redirect_ptr+1,input);
+		putchar('\n');
 
 	}else{
 
@@ -207,9 +209,10 @@ int main(void){
 
 	while(1){
 
-		
+l2:		
 		printf("$ ");
 		fgets(command,sizeof(command),stdin);
+		if(command[0]=='\0' || command[0]=='\n') goto l2;
 
 		command[strcspn(command,"\n")]='\0';
 		
