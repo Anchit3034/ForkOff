@@ -93,48 +93,28 @@ void handle_type(char *cmd){
 }
 
 void trim_space(char *str){
-	char *start = str;
-	while(isspace((unsigned char)*start)) start++;
-	if(start!=str) memmove(str,start,strlen(start)+1);
-
-	int len=strlen(str);
-	while(len>0 && isspace((unsigned char)str[len-1])){
-		str[len-1]='\0';
-		len--;
+	char *start= str;
+	int8_t read=0,write=0;
+	while(start[read]!='\0'){
+		if(start[read]!=' ' && start[read]!='>'){
+			start[write++]=start[read];
+		}
+		read++;
 	}
+	start[write]='\0';
 }
 
 void file_redir(char *filename,char *input){
 	
-	bool is_single_arr = strcmp(input,"1>");
-	bool is_double_arr = strcmp(input,"2>");
-	bool is_append_arr = strcmp(input,">>");
-	bool is_err_append_arr = strcmp(input,"2>>");
-	FILE *fptr;
-	if(is_single_arr){
-
-		fptr = fopen(filename,"w");
-		trim_space(filename);
-	}else if(is_double_arr){
-		
-		fptr = fopen(filename,"w");
-		trim_space(filename);
-	}
-	else if(is_append_arr){
-
-		fptr = fopen(filename+1,"a");
-		trim_space(filename+1);
-	}
-	else if(is_err_append_arr){
-
-		fptr = fopen(filename+1,"a");
-		trim_space(filename+1);
-	}
+	const char *restrict type = (!strcmp(input,">>")) ? "a":"w";
+	trim_space(filename);
+	FILE *fptr=fopen(filename,type);
 
 	if(fptr==NULL){
-		perror("error redirecting stdout");
+		perror("failed redirecting");
 		return;
 	}
+
 	int8_t ch=0;
 	while(input[ch]!='>'){
 		if((input[ch]=='1' || input[ch]=='2') && input[ch+1]=='>'){
@@ -156,6 +136,7 @@ void print_echo(char *input){
 	bool is_backslash=false;
 
 	char *redirect_ptr = strchr(input,'>');
+
 
 	if(redirect_ptr != NULL){
 		file_redir(redirect_ptr+1,input);
