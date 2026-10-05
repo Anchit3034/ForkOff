@@ -106,9 +106,30 @@ void trim_space(char *str){
 
 void file_redir(char *filename,char *input){
 	
+	bool is_single_arr = strcmp(input,"1>");
+	bool is_double_arr = strcmp(input,"2>");
+	bool is_append_arr = strcmp(input,">>");
+	bool is_err_append_arr = strcmp(input,"2>>");
+	FILE *fptr;
+	if(is_single_arr){
 
-	trim_space(filename);
-	FILE *fptr = fopen(filename,"a");
+		fptr = fopen(filename,"w");
+		trim_space(filename);
+	}else if(is_double_arr){
+		
+		fptr = fopen(filename,"w");
+		trim_space(filename);
+	}
+	else if(is_append_arr){
+
+		fptr = fopen(filename+1,"a");
+		trim_space(filename+1);
+	}
+	else if(is_err_append_arr){
+
+		fptr = fopen(filename+1,"a");
+		trim_space(filename+1);
+	}
 
 	if(fptr==NULL){
 		perror("error redirecting stdout");
@@ -116,7 +137,7 @@ void file_redir(char *filename,char *input){
 	}
 	int8_t ch=0;
 	while(input[ch]!='>'){
-		if(input[ch]=='1' && input[ch+1]=='>'){
+		if((input[ch]=='1' || input[ch]=='2') && input[ch+1]=='>'){
 			ch++;
 			continue;
 		}
@@ -138,7 +159,6 @@ void print_echo(char *input){
 
 	if(redirect_ptr != NULL){
 		file_redir(redirect_ptr+1,input);
-		putchar('\n');
 
 	}else{
 
