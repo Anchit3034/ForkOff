@@ -106,7 +106,7 @@ void trim_space(char *str){
 
 void file_redir(char *filename,char *input){
 	
-	const char *restrict type = (strcmp(input,">>")==0) ? "a":"w";
+	const char *restrict type = (strcmp(input,">>")==0) ? (char *restrict)"a":(char *restrict)"w";
 	int8_t move = (type==(char *restrict)"a") ? 1:0;
 	trim_space(filename+move);
 	FILE *fptr=fopen(filename,type);
@@ -230,7 +230,7 @@ l2:
 				print_echo(command+5);
 				break;
 			case pwd:
-				curr_work_dir(0,NULL);
+				curr_work_dir(1,NULL);
 				break;
 			case type:
 				handle_type(command+5);
