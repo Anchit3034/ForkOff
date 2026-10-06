@@ -106,8 +106,9 @@ void trim_space(char *str){
 
 void file_redir(char *filename,char *input){
 	
-	const char *restrict type = (!strcmp(input,">>")) ? "a":"w";
-	trim_space(filename);
+	const char *restrict type = (strcmp(input,">>")==0) ? "a":"w";
+	int8_t move = (type==(char *restrict)"a") ? 1:0;
+	trim_space(filename+move);
 	FILE *fptr=fopen(filename,type);
 
 	if(fptr==NULL){
