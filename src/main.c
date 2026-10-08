@@ -92,7 +92,7 @@ void handle_type(char *cmd){
 	find_path(cmd,1);	
 }
 
-void trim_space(char *str){
+char *trim_space(char *str){
 	char *start= str;
 	int8_t read=0,write=0;
 	while(start[read]!='\0'){
@@ -102,14 +102,15 @@ void trim_space(char *str){
 		read++;
 	}
 	start[write]='\0';
+	return start;
 }
 
 void file_redir(char *filename,char *input){
 	
-	const char *restrict type = (strcmp(input,">>")==0) ? (char *restrict)"a":(char *restrict)"w";
+	const char *restrict type = (strstr(input,">>") != NULL) ? "a":"w";
 	int8_t move = (type==(char *restrict)"a") ? 1:0;
-	trim_space(filename+move);
-	FILE *fptr=fopen(filename,type);
+	char *file = trim_space(filename+move);
+	FILE *fptr=fopen(file,type);
 
 	if(fptr==NULL){
 		perror("failed redirecting");
