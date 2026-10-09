@@ -245,7 +245,7 @@ l2:
 			default:
 				char *temp=strtok(command," ");
 				char *table[51];
-				int count=0;
+				int8_t count=0;
 				while(temp!=NULL){
 					table[count]=temp;
 					count++;
