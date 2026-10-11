@@ -4,6 +4,7 @@
 #include<unistd.h>
 #include<sys/wait.h>
 #include<stdint.h>
+#include<signal.h>
 #include<ctype.h>
 
 
@@ -214,11 +215,20 @@ int main(void){
 
 	setbuf(stdout,NULL);
 
+
+	if(signal(SIGINT,SIG_IGN)){
+		goto l2;
+	}
+
+
 	while(1){
 
 l2:		
 		printf("$ ");
 		fgets(command,sizeof(command),stdin);
+
+
+
 		if(command[0]=='\n') goto l2;
 
 		command[strcspn(command,"\n")]='\0';
