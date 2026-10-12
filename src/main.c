@@ -93,6 +93,20 @@ void handle_type(char *cmd){
 	find_path(cmd,1);	
 }
 
+void tokenisation(char **table,char *str){
+	char *temp=strtok(command,str);
+
+	int8_t count=0;
+	while(temp!=NULL){
+		table[count]=temp;
+		count++;
+		if(count >= 50) break;
+		temp=strtok(NULL,str);
+	}
+	table[count]=NULL;
+}
+
+
 char *trim_space(char *str){
 	char *start= str;
 	int8_t read=0,write=0;
@@ -253,16 +267,8 @@ l2:
 				else printf("cd: %s: No such file or directory\n",s);
 				break;
 			default:
-				char *temp=strtok(command," ");
 				char *table[51];
-				int8_t count=0;
-				while(temp!=NULL){
-					table[count]=temp;
-					count++;
-					if(count >= 50) break;
-					temp=strtok(NULL," ");
-				}
-				table[count]=NULL;
+				tokenisation(table," ");
 				if(find_path(table[0],0)){
 					pid_t pid = fork();
 					if(pid<0){
