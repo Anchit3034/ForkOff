@@ -8,7 +8,7 @@
 #include<ctype.h>
 
 
-char command[1024];
+//char command[1024];
 char buffer[512];
 
 
@@ -93,7 +93,7 @@ void handle_type(char *cmd){
 	find_path(cmd,1);	
 }
 
-void tokenisation(char **table,char *str){
+void tokenisation(char **table,char *command,char *str){
 	char *temp=strtok(command,str);
 
 	int8_t count=0;
@@ -153,11 +153,19 @@ void print_echo(char *input){
 	bool is_backslash=false;
 
 	char *redirect_ptr = strchr(input,'>');
+	char *table[51];
+// temp solution
+	tokenisation(table,redirect_ptr+1,">");
 
+	
+	if(table[0] != NULL){
+		int8_t i=0;
+		while(table[i]!=NULL){
+			file_redir(table[i++],input);
+			
+		}
 
-	if(redirect_ptr != NULL){
-		file_redir(redirect_ptr+1,input);
-
+//temp solution
 	}else{
 
 		for(int i=0;input[i]!='\0';i++){
@@ -234,7 +242,7 @@ int main(void){
 		goto l2;
 	}
 
-
+	char command[1024];
 	while(1){
 
 l2:		
@@ -268,7 +276,7 @@ l2:
 				break;
 			default:
 				char *table[51];
-				tokenisation(table," ");
+				tokenisation(table,command," ");
 				if(find_path(table[0],0)){
 					pid_t pid = fork();
 					if(pid<0){
