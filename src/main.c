@@ -4,6 +4,7 @@
 #include<unistd.h>
 #include<sys/wait.h>
 #include<stdint.h>
+#include<fcntl.h>
 #include<signal.h>
 #include<ctype.h>
 
@@ -122,27 +123,48 @@ char *trim_space(char *str){
 
 void file_redir(char *filename,char *input){
 	
-	const char *restrict type = (strstr(input,">>") != NULL) ? "a":"w";
-	int8_t move = (type==(char *restrict)"a") ? 1:0;
-	char *file = trim_space(filename+move);
-	FILE *fptr=fopen(file,type);
-
-	if(fptr==NULL){
-		perror("failed redirecting");
+	//const char *restrict type = (strstr(input,">>") != NULL) ? "a":"w";
+	//int8_t move = (type==(char *restrict)"a") ? 1:0;
+	//char *file = trim_space(filename+move);
+	//FILE *fptr=fopen(file,type);
+	
+	int8_t saved_stdout = dup(STDOUT_FILENO);
+	if(saved_stdout<0){
+		perror("Failed to dup stdout");
 		return;
 	}
 
+	int8_t fd = open(filename,	O_WRONLY | O_CREAT | O_TRUNC, 0644);
+
+	if(fd < 0){
+		perror("failed redirecting");
+		return;
+	}
+	
+	if(dup2(fd,STDOUT_FILENO)<0){
+		printf("dup2 failed to redirect");
+		return;
+	}
+
+	close(fd);
 	int8_t ch=0;
 	while(input[ch]!='>'){
 		if((input[ch]=='1' || input[ch]=='2') && input[ch+1]=='>'){
 			ch++;
 			continue;
 		}
-		fputc(input[ch++],fptr);
+		putchar(input[ch++]);
 	}
 
-	fputc('\n',fptr);
-	fclose(fptr);
+	putchar('\n');
+	fflush(stdout);
+	//fclose(fptr);
+	if(dup2(saved_stdout,STDOUT_FILENO)<0){
+		printf("dup2 failted to re stdout");
+		return;
+	}
+	close(saved_stdout);
+
 	
 }
 
