@@ -175,19 +175,25 @@ void print_echo(char *input){
 	bool is_backslash=false;
 
 	char *redirect_ptr = strchr(input,'>');
-	char *table[51];
+	if(redirect_ptr!=NULL){
+
 // temp solution
-	tokenisation(table,redirect_ptr+1,">");
+		
+		char *table[51];
+		tokenisation(table,redirect_ptr+1,">");
 
 	
-	if(table[0] != NULL){
-		int8_t i=0;
-		while(table[i]!=NULL){
-			file_redir(table[i++],input);
+		if(table[0] != NULL){
+			int8_t i=0;
+			while(table[i]!=NULL){
+				file_redir(table[i++],input);
 			
+			}
 		}
 
+
 //temp solution
+
 	}else{
 
 		for(int i=0;input[i]!='\0';i++){
@@ -266,8 +272,7 @@ int main(void){
 
 	char command[1024];
 	while(1){
-
-l2:		
+l2:
 		printf("$ ");
 		fgets(command,sizeof(command),stdin);
 
