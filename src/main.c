@@ -59,7 +59,7 @@ void remove_quotes(char *str);
 
 int find_path(char *command,int type){
 	
-	int found=0;
+	int8_t found=0;
 	if(command[0]=='\'' || command[0]=='\"' || command[0]=='%'){
 		remove_quotes(command);
 		curr_work_dir(0,command);
@@ -239,9 +239,12 @@ void print_echo(char *input){
 }
 
 void curr_work_dir(int type, char *command){
-	char cwd[256];
-	if((getcwd(cwd,sizeof(cwd))!=NULL) && type==1) printf("%s\n",cwd);
-	else if(type==0) sprintf(buffer,"%s/%s",cwd,command);
+	char *cwd=getcwd(NULL,0);
+	if(cwd!=NULL){
+		if(type==1) printf("%s\n",cwd);
+		else sprintf(buffer,"%s/%s",cwd,command);
+		free(cwd);
+	}
 	else perror("getcwd error");
 }
 
