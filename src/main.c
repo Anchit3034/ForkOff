@@ -182,6 +182,7 @@ void print_echo(char *input){
 		char *table[51];
 		tokenisation(table,redirect_ptr+1,">");
 
+		//tokenisation(table,redirect_ptr+1,">> ");
 	
 		if(table[0] != NULL){
 			int8_t i=0;
@@ -239,11 +240,12 @@ void print_echo(char *input){
 }
 
 void curr_work_dir(int type, char *command){
-	char *cwd=getcwd(NULL,0);
-	if(cwd!=NULL){
+	//char *cwd=getcwd(NULL,0);
+	char cwd[128];
+	if((getcwd(cwd,sizeof(cwd))!=NULL)){
 		if(type==1) printf("%s\n",cwd);
 		else sprintf(buffer,"%s/%s",cwd,command);
-		free(cwd);
+	//	free(cwd);
 	}
 	else perror("getcwd error");
 }
