@@ -1,11 +1,15 @@
-## ForkOff
-So what is this? Well it is a Custom Shell That I was trying making. It is good and fast, low Ram consuming and Leaks free.
+# ForkOff
 
-I Need a code Review and yours perspective about the code. Do Drop a star on the repo.
+**ForkOff** is a custom UNIX shell written in C with a focus on speed, low RAM usage, and zero memory leaks. 
 
+It was built as a hands-on project applying concepts from *Beej's Guide to C Programming* alongside Linux man pages.
+
+## Seeking Feedback
+I am actively looking for **code reviews** and community perspectives on architecture, memory safety, and POSIX compliance. If you check out the code and like what you see, feel free to leave a ⭐ on the repo!
 
 ## License & Credit
-This project is open-source. You are free to use and modify it, but you **must give credit** by linking back to this repository or mentioning `[Anchit Jain]`.
+This project is open-source under the condition that you provide attribution by linking back to this repository and crediting **Anchit Jain**.
 
-
-
+---
+> *"Do. Or do not. There is no try."*  
+> May the Force be with you.
