@@ -57,7 +57,7 @@ void curr_work_dir(int type, char *command);
 
 void remove_quotes(char *str);
 
-int find_path(char *command,int type){
+int8_t find_path(char *command,int type){
 	
 	int8_t found=0;
 	if(command[0]=='\'' || command[0]=='\"' || command[0]=='%'){
@@ -95,14 +95,22 @@ void handle_type(char *cmd){
 }
 
 void tokenisation(char **table,char *command,char *str){
+	if(command == str){
+		command++;
+	}
 	char *temp=strtok(command,str);
 
 	int8_t count=0;
 	while(temp!=NULL){
+		
 		table[count]=temp;
 		count++;
 		if(count >= 50) break;
+
 		temp=strtok(NULL,str);
+		if(temp == str){
+			temp++;
+		}
 	}
 	table[count]=NULL;
 }
@@ -121,7 +129,7 @@ char *trim_space(char *str){
 	return start;
 }
 
-void file_redir(char *filename,char *input){
+void file_redir(char *filename,char *input, int8_t type){
 	
 	//const char *restrict type = (strstr(input,">>") != NULL) ? "a":"w";
 	//int8_t move = (type==(char *restrict)"a") ? 1:0;
@@ -133,9 +141,10 @@ void file_redir(char *filename,char *input){
 		perror("Failed to dup stdout");
 		return;
 	}
-
-	int8_t fd = open(filename,	O_WRONLY | O_CREAT | O_TRUNC, 0644);
-
+	int8_t fd;
+	if(type==0) fd = open(filename,	O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	else if(type==1) fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	
 	if(fd < 0){
 		perror("failed redirecting");
 		return;
@@ -184,13 +193,18 @@ void print_echo(char *input){
 
 		//tokenisation(table,redirect_ptr+1,">> ");
 	
-		if(table[0] != NULL){
-			int8_t i=0;
-			while(table[i]!=NULL){
-				file_redir(table[i++],input);
+		int8_t i=0;
+		while(table[i]!=NULL){
 			
+			int8_t type=0;
+			if(strncmp(redirect_ptr,">>",2)==0){
+				type = 1;
+				redirect_ptr += strlen(table[i]);
 			}
+			file_redir(table[i++],input,type);
+			
 		}
+		
 
 
 //temp solution
