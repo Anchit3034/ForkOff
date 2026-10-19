@@ -38,10 +38,10 @@ typedef enum{
 
 COMMAND command_to_emun(char *str){
 	if(strncmp(str,"echo ",5)==0) return echo;
-	if(strcmp(str,"exit")==0) return ex_it;
+	if(strncmp(str,"exit",4)==0) return ex_it;
 	if(strncmp(str,"cd ",3)==0) return cd;
 	if(strncmp(str,"type ",5)==0) return type;
-	if(strcmp(str,"pwd")==0) return pwd;
+	if(strncmp(str,"pwd",3)==0) return pwd;
 	return de_fault;
 }
 
@@ -87,7 +87,7 @@ int8_t find_path(char *command,int type){
 }
 
 void handle_type(char *cmd){
-	if (!strcmp(cmd,"echo") || !strcmp(cmd,"exit") || !strcmp(cmd,"type") || !strcmp(cmd,"pwd") || !strcmp(cmd,"cd")){
+	if (!strncmp(cmd,"echo",4) || !strncmp(cmd,"exit",4) || !strncmp(cmd,"type",4) || !strncmp(cmd,"pwd",3) || !strncmp(cmd,"cd",2)){
 			printf("%s is a shell builtin\n",cmd);
 			return;
 	}
@@ -316,7 +316,7 @@ l2:
 				break;
 			case cd:
 				char *s=command+3;
-				if(strcmp(s,"~")==0) s=getenv("HOME");
+				if(strncmp(s,"~",1)==0) s=getenv("HOME");
 				if(chdir(s)==0);
 				else printf("cd: %s: No such file or directory\n",s);
 				break;
