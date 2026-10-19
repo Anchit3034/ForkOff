@@ -129,22 +129,30 @@ char *trim_space(char *str){
 	return start;
 }
 
-void file_redir(char *filename,char *input, int8_t type){
+void file_redir(char *filename,char *input, int8_t type,int8_t err_flag){
 	
 	//const char *restrict type = (strstr(input,">>") != NULL) ? "a":"w";
 	//int8_t move = (type==(char *restrict)"a") ? 1:0;
 	//char *file = trim_space(filename+move);
 	//FILE *fptr=fopen(file,type);
 	
-	int saved_stdout = dup(STDOUT_FILENO);
-	if(saved_stdout<0){
-		perror("Failed to dup stdout");
+	int saved_std;
+
+	if(err_flag==1) saved_std = dup(STDERR_FILENO);
+	
+	else saved_std = dup(STDOUT_FILENO);
+
+
+	if(saved_std<0){
+		perror("Failed to dup");
 		return;
 	}
 	int fd;
 	if(type==1) fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	
 	else if(type==0) fd = open(filename,	O_WRONLY | O_CREAT | O_TRUNC, 0644);
+
+
 	if(fd < 0){
 		perror("failed redirecting");
 		return;
@@ -168,11 +176,11 @@ void file_redir(char *filename,char *input, int8_t type){
 	putchar('\n');
 	fflush(stdout);
 	//fclose(fptr);
-	if(dup2(saved_stdout,STDOUT_FILENO)<0){
-		printf("dup2 failted to re stdout");
+	if(dup2(saved_std,STDOUT_FILENO)<0){
+		printf("dup2 failted to redir");
 		return;
 	}
-	close(saved_stdout);
+	close(saved_std);
 
 	
 }
@@ -197,11 +205,17 @@ void print_echo(char *input){
 		while(table[i]!=NULL){
 			
 			int8_t type=0;
+			int8_t err_flag=0;
+
+			if(strncmp(redirect_ptr-1,"2>",2)==0){
+				err_flag=1;
+			}
+
 			if(strncmp(redirect_ptr,">>",2)==0){
 				type = 1;
 				redirect_ptr += strlen(table[i]);
 			}
-			file_redir(table[i++],input,type);
+			file_redir(table[i++],input,type,err_flag);
 			
 		}
 		
