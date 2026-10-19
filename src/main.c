@@ -136,15 +136,15 @@ void file_redir(char *filename,char *input, int8_t type){
 	//char *file = trim_space(filename+move);
 	//FILE *fptr=fopen(file,type);
 	
-	int8_t saved_stdout = dup(STDOUT_FILENO);
+	int saved_stdout = dup(STDOUT_FILENO);
 	if(saved_stdout<0){
 		perror("Failed to dup stdout");
 		return;
 	}
-	int8_t fd;
-	if(type==0) fd = open(filename,	O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	else if(type==1) fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	int fd;
+	if(type==1) fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	
+	else if(type==0) fd = open(filename,	O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if(fd < 0){
 		perror("failed redirecting");
 		return;
