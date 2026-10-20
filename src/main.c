@@ -141,10 +141,17 @@ void file_redir(char *filename,char *input, int8_t type,int8_t err_flag){
 	//FILE *fptr=fopen(file,type);
 	
 	int saved_std;
+	int used_std;
 
-	if(err_flag==1) saved_std = dup(STDERR_FILENO);
+	if(err_flag==1){
+		saved_std = dup(STDERR_FILENO);
+		used_std = STDERR_FILENO;
+	}
 	
-	else saved_std = dup(STDOUT_FILENO);
+	else{
+		saved_std = dup(STDOUT_FILENO);
+		used_std = STDOUT_FILENO;
+	}
 
 
 	if(saved_std<0){
@@ -162,7 +169,7 @@ void file_redir(char *filename,char *input, int8_t type,int8_t err_flag){
 		return;
 	}
 	
-	if(dup2(fd,STDOUT_FILENO)<0){
+	if(dup2(fd,used_std)<0){
 		printf("dup2 failed to redirect");
 		return;
 	}
@@ -180,7 +187,7 @@ void file_redir(char *filename,char *input, int8_t type,int8_t err_flag){
 	putchar('\n');
 	fflush(stdout);
 	//fclose(fptr);
-	if(dup2(saved_std,STDOUT_FILENO)<0){
+	if(dup2(saved_std,used_std)<0){
 		printf("dup2 failted to redir");
 		return;
 	}
