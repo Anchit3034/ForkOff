@@ -5,6 +5,7 @@
 #include<sys/wait.h>
 #include<stdint.h>
 #include<fcntl.h>
+#include<pthread.h>
 #include<signal.h>
 #include<ctype.h>
 
@@ -182,8 +183,34 @@ void file_redir(char *filename,char *input, int8_t type,int8_t err_flag){
 	}
 	close(saved_std);
 
-	
 }
+
+void* command_runner(void *command){
+	char *cmd = (char*)command;
+	char *table[51];
+	tokenisation(table,cmd," ");
+	if(find_path(table[0],0)){
+		pid_t pid = fork();
+		if(pid<0){
+			perror("Forked failed\n");
+			exit(1);
+		}
+		if(pid==0){
+			execv(buffer,table);
+
+			perror("Execv failed");
+			exit(1);
+		}
+				
+		int status;
+		waitpid(pid,&status,0);					
+	}
+	else{
+		printf("%s: command not found\n",cmd);
+	}
+	return NULL;
+}
+
 
 void print_echo(char *input){
 	bool is_single_quotes=false;
@@ -222,7 +249,6 @@ void print_echo(char *input){
 
 
 //temp solution
-
 	}else{
 
 		for(int i=0;input[i]!='\0';i++){
@@ -297,11 +323,12 @@ void remove_quotes(char *str){
 int main(void){
 
 	setbuf(stdout,NULL);
-
+	
 
 	if(signal(SIGINT,SIG_IGN)){
 		goto l2;
 	}
+	pthread_t t;
 
 	char command[1024];
 	while(1){
@@ -326,6 +353,7 @@ l2:
 				curr_work_dir(1,NULL);
 				break;
 			case type:
+				
 				handle_type(command+5);
 				break;
 			case cd:
@@ -335,27 +363,8 @@ l2:
 				else printf("cd: %s: No such file or directory\n",s);
 				break;
 			default:
-				char *table[51];
-				tokenisation(table,command," ");
-				if(find_path(table[0],0)){
-					pid_t pid = fork();
-					if(pid<0){
-						perror("Forked failed\n");
-						exit(1);
-					}
-					if(pid==0){
-						execv(buffer,table);
-
-						perror("Execv failed");
-						exit(1);
-					}
-				
-					int status;
-					waitpid(pid,&status,0);					
-				}
-				else{
-					printf("%s: command not found\n",command);
-				}
+				pthread_create(&t,NULL,command_runner,command);
+				pthread_join(t,NULL);
 				break;
 		}
 
