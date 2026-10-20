@@ -87,12 +87,15 @@ int8_t find_path(char *command,int type){
 	return found;
 }
 
-void handle_type(char *cmd){
-	if (!strncmp(cmd,"echo",4) || !strncmp(cmd,"exit",4) || !strncmp(cmd,"type",4) || !strncmp(cmd,"pwd",3) || !strncmp(cmd,"cd",2)){
-			printf("%s is a shell builtin\n",cmd);
-			return;
+void* handle_type(void *cmd){
+	char *command = (char *)cmd;
+
+	if (!strncmp(command,"echo",4) || !strncmp(command,"exit",4) || !strncmp(command,"type",4) || !strncmp(command,"pwd",3) || !strncmp(command,"cd",2)){
+			printf("%s is a shell builtin\n",command);
+			return NULL;
 	}
-	find_path(cmd,1);	
+	find_path(command,1);
+	return NULL;
 }
 
 void tokenisation(char **table,char *command,char *str){
@@ -212,7 +215,8 @@ void* command_runner(void *command){
 }
 
 
-void print_echo(char *input){
+void* print_echo(void *in){
+	char* input = (char *)in;
 	bool is_single_quotes=false;
 	uint8_t count=0;
 	bool is_double_quotes=false;
@@ -287,7 +291,7 @@ void print_echo(char *input){
 		putchar('\n');
 
 	}
-
+	return NULL;
 		
 	
 
@@ -347,14 +351,18 @@ l2:
 			case ex_it:
 				goto l1;
 			case echo:
-				print_echo(command+5);
+				pthread_create(&t,NULL,print_echo,command+5);
+				pthread_join(t,NULL);
+
 				break;
 			case pwd:
+
 				curr_work_dir(1,NULL);
 				break;
 			case type:
-				
-				handle_type(command+5);
+				pthread_create(&t,NULL,handle_type,command+5);
+				pthread_join(t,NULL);
+
 				break;
 			case cd:
 				char *s=command+3;
