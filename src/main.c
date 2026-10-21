@@ -129,6 +129,54 @@ char *trim_space(char *str){
 	return start;
 }
 
+void printer(char* input){
+	bool is_single_quotes=false;
+	uint8_t count=0;
+	bool is_double_quotes=false;
+	bool is_backslash=false;
+	
+	for(int i=0;input[i]!='\0' && input[i]!='>';i++){
+		char curr=input[i];
+		if((input[i]=='1' || input[i]=='2') && input[i+1]=='>'){
+			break;
+		}
+
+		if((is_single_quotes && curr!='\'') || (is_double_quotes && curr!='\"') || (is_backslash )){
+			putchar(curr);
+			is_backslash=false;
+			continue;
+		}
+		QUOTING quote = quote_to_enum(curr);
+
+		switch(quote){
+			case single_q:
+				is_single_quotes = !is_single_quotes;
+				break;
+			case double_q:
+				is_double_quotes = !is_double_quotes;
+				break;
+			case backslash:
+				is_backslash=true;
+				break;
+			default:
+				if (curr!=' ' && curr!='\t'){
+					putchar(curr);
+					count=0;
+				}else{
+					if(count==0){
+						putchar(' ');
+						count=1;
+					}
+				}
+				break;
+		
+		}
+	
+	}
+	putchar('\n');
+}
+
+
 void file_redir(char *filename,char *input, int8_t type,int8_t err_flag){
 	
 	//const char *restrict type = (strstr(input,">>") != NULL) ? "a":"w";
@@ -157,7 +205,7 @@ void file_redir(char *filename,char *input, int8_t type,int8_t err_flag){
 	int fd;
 	if(type==1) fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	
-	else if(type==0) fd = open(filename,	O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	else fd = open(filename,O_WRONLY | O_CREAT | O_TRUNC, 0644);
 
 
 	if(fd < 0){
@@ -171,16 +219,9 @@ void file_redir(char *filename,char *input, int8_t type,int8_t err_flag){
 	}
 
 	close(fd);
-	int8_t ch=0;
-	while(input[ch]!='>'){
-		if((input[ch]=='1' || input[ch]=='2') && input[ch+1]=='>'){
-			ch++;
-			continue;
-		}
-		putchar(input[ch++]);
-	}
+	printer(input);
 
-	putchar('\n');
+
 	fflush(stdout);
 	//fclose(fptr);
 	if(dup2(saved_std,used_std)<0){
@@ -220,10 +261,10 @@ void* command_runner(void *command){
 
 void* print_echo(void *in){
 	char* input = (char *)in;
-	bool is_single_quotes=false;
+	/*bool is_single_quotes=false;
 	uint8_t count=0;
 	bool is_double_quotes=false;
-	bool is_backslash=false;
+	bool is_backslash=false;*/
 
 	char *redirect_ptr = strchr(input,'>');
 	if(redirect_ptr!=NULL){
@@ -257,41 +298,7 @@ void* print_echo(void *in){
 
 //temp solution
 	}else{
-
-		for(int i=0;input[i]!='\0';i++){
-			char curr=input[i];
-			if((is_single_quotes && curr!='\'') || (is_double_quotes && curr!='\"') || (is_backslash )){
-				putchar(curr);
-				is_backslash=false;
-				continue;
-			}
-			QUOTING quote = quote_to_enum(curr);
-
-			switch(quote){
-				case single_q:
-					is_single_quotes = !is_single_quotes;
-					break;
-				case double_q:
-					is_double_quotes = !is_double_quotes;
-					break;
-				case backslash:
-					is_backslash=true;
-					break;
-				default:
-					if (curr!=' ' && curr!='\t'){
-						putchar(curr);
-						count=0;
-					}else{
-						if(count==0){
-							putchar(' ');
-							count=1;
-						}
-					}
-					break;
-			}
-
-		}
-		putchar('\n');
+		printer(input);
 
 	}
 	return NULL;
