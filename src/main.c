@@ -23,10 +23,6 @@ typedef enum{
 	de_fault
 }COMMAND;
 
-typedef enum{
-	error=0,
-	std_out,
-}REDIR;
 
 typedef enum{
 	normal=0,
@@ -336,9 +332,9 @@ int main(void){
 	setbuf(stdout,NULL);
 	
 
-	if(signal(SIGINT,SIG_IGN)){
-		goto l2;
-	}
+	signal(SIGINT,SIG_IGN);
+		
+	
 	pthread_t t;
 
 	char command[1024];
