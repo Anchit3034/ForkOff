@@ -83,15 +83,15 @@ int8_t find_path(char *command,int type){
 	return found;
 }
 
-void* handle_type(void *cmd){
-	char *command = (char *)cmd;
+void handle_type(char *command){
+	//char *command = (char *)cmd;
 
 	if (!strncmp(command,"echo",4) || !strncmp(command,"exit",4) || !strncmp(command,"type",4) || !strncmp(command,"pwd",3) || !strncmp(command,"cd",2)){
 			printf("%s is a shell builtin\n",command);
-			return NULL;
+			return;
 	}
 	find_path(command,1);
-	return NULL;
+	return;
 }
 
 void tokenisation(char **table,char *command,char *str){
@@ -100,12 +100,12 @@ void tokenisation(char **table,char *command,char *str){
 	}
 	char *temp=strtok(command,str);
 
-	int8_t count=0;
+	int count=0;
 	while(temp!=NULL){
 		
 		table[count]=temp;
 		count++;
-		if(count >= 50) break;
+		if(count >= 65536) break;
 
 		temp=strtok(NULL,str);
 		if(temp == str){
@@ -118,7 +118,7 @@ void tokenisation(char **table,char *command,char *str){
 
 char *trim_space(char *str){
 	char *start= str;
-	int8_t read=0,write=0;
+	int read=0,write=0;
 	while(start[read]!='\0'){
 		if(start[read]!=' ' && start[read]!='>'){
 			start[write++]=start[read];
@@ -232,9 +232,9 @@ void file_redir(char *filename,char *input, int8_t type,int8_t err_flag){
 
 }
 
-void* command_runner(void *command){
-	char *cmd = (char*)command;
-	char *table[51];
+void command_runner(char *cmd){
+	//char *cmd = (char*)command;
+	char *table[65536];
 	tokenisation(table,cmd," ");
 	if(find_path(table[0],0)){
 		pid_t pid = fork();
@@ -255,12 +255,12 @@ void* command_runner(void *command){
 	else{
 		printf("%s: command not found\n",cmd);
 	}
-	return NULL;
+	return;
 }
 
 
-void* print_echo(void *in){
-	char* input = (char *)in;
+void print_echo(char *input){
+	//char* input = (char *)in;
 	/*bool is_single_quotes=false;
 	uint8_t count=0;
 	bool is_double_quotes=false;
@@ -301,7 +301,7 @@ void* print_echo(void *in){
 		printer(input);
 
 	}
-	return NULL;
+	return;
 		
 	
 
@@ -320,8 +320,8 @@ void curr_work_dir(int type, char *command){
 
 
 void remove_quotes(char *str){
-	uint8_t i=0;
-	uint8_t j=0;
+	int i=0;
+	int j=0;
 
 	while(str[i]!='\0'){
 		if(str[i] != '\'' && str[i] != '\"' && str[i]!='%'){
@@ -342,7 +342,6 @@ int main(void){
 	signal(SIGINT,SIG_IGN);
 		
 	
-	pthread_t t;
 
 	char command[1024];
 	while(1){
@@ -361,8 +360,9 @@ l2:
 			case ex_it:
 				goto l1;
 			case echo:
-				pthread_create(&t,NULL,print_echo,command+5);
-				pthread_join(t,NULL);
+				print_echo(command+5);
+				//pthread_create(&t,NULL,print_echo,command+5);
+				//pthread_join(t,NULL);
 
 				break;
 			case pwd:
@@ -370,8 +370,9 @@ l2:
 				curr_work_dir(1,NULL);
 				break;
 			case type:
-				pthread_create(&t,NULL,handle_type,command+5);
-				pthread_join(t,NULL);
+				handle_type(command+5);
+				//pthread_create(&t,NULL,handle_type,command+5);
+				//pthread_join(t,NULL);
 
 				break;
 			case cd:
@@ -381,8 +382,10 @@ l2:
 				else printf("cd: %s: No such file or directory\n",s);
 				break;
 			default:
-				pthread_create(&t,NULL,command_runner,command);
-				pthread_join(t,NULL);
+				command_runner(command);
+
+				//pthread_create(&t,NULL,command_runner,command);
+				//pthread_join(t,NULL);
 				break;
 		}
 
