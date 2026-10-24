@@ -9,7 +9,6 @@
 #include<ctype.h>
 
 #define SIZE 65536
-//char command[1024];
 char buffer[512];
 
 
@@ -259,11 +258,7 @@ void command_runner(char *cmd){
 
 
 void print_echo(char *input){
-	//char* input = (char *)in;
-	/*bool is_single_quotes=false;
-	uint8_t count=0;
-	bool is_double_quotes=false;
-	bool is_backslash=false;*/
+
 
 	char *redirect_ptr = strchr(input,'>');
 	if(redirect_ptr!=NULL){
@@ -289,6 +284,7 @@ void print_echo(char *input){
 				type = 1;
 				redirect_ptr += strlen(table[i]);
 			}
+			trim_space(table[i]);
 			file_redir(table[i++],input,type,err_flag);
 			
 		}
@@ -307,12 +303,10 @@ void print_echo(char *input){
 }
 
 void curr_work_dir(int type, char *command){
-	//char *cwd=getcwd(NULL,0);
 	char cwd[128];
 	if((getcwd(cwd,sizeof(cwd))!=NULL)){
 		if(type==1) printf("%s\n",cwd);
 		else sprintf(buffer,"%s/%s",cwd,command);
-	//	free(cwd);
 	}
 	else perror("getcwd error");
 }
@@ -346,7 +340,8 @@ int main(void){
 	while(1){
 l2:
 		printf("$ ");
-		fgets(command,sizeof(command),stdin);
+
+		if(fgets(command,sizeof(command),stdin)==NULL) goto l1;
 
 
 
@@ -360,8 +355,6 @@ l2:
 				goto l1;
 			case echo:
 				print_echo(command+5);
-				//pthread_create(&t,NULL,print_echo,command+5);
-				//pthread_join(t,NULL);
 
 				break;
 			case pwd:
@@ -370,8 +363,6 @@ l2:
 				break;
 			case type:
 				handle_type(command+5);
-				//pthread_create(&t,NULL,handle_type,command+5);
-				//pthread_join(t,NULL);
 
 				break;
 			case cd:
@@ -383,8 +374,6 @@ l2:
 			default:
 				command_runner(command);
 
-				//pthread_create(&t,NULL,command_runner,command);
-				//pthread_join(t,NULL);
 				break;
 		}
 
