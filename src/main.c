@@ -5,11 +5,10 @@
 #include<sys/wait.h>
 #include<stdint.h>
 #include<fcntl.h>
-#include<pthread.h>
 #include<signal.h>
 #include<ctype.h>
 
-
+#define SIZE 65536
 //char command[1024];
 char buffer[512];
 
@@ -234,7 +233,7 @@ void file_redir(char *filename,char *input, int8_t type,int8_t err_flag){
 
 void command_runner(char *cmd){
 	//char *cmd = (char*)command;
-	char *table[65536];
+	char *table[SIZE];
 	tokenisation(table,cmd," ");
 	if(find_path(table[0],0)){
 		pid_t pid = fork();
@@ -271,7 +270,7 @@ void print_echo(char *input){
 
 // temp solution
 		
-		char *table[51];
+		char *table[SIZE];
 		tokenisation(table,redirect_ptr+1,">");
 
 		//tokenisation(table,redirect_ptr+1,">> ");
