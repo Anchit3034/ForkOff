@@ -8,8 +8,10 @@
 #include<signal.h>
 #include<ctype.h>
 
-#define SIZE 65536
-char buffer[512];
+#define MAXIMUM_COMMAND_LENGTH 8192
+#define MAX_BUFFER_LENGTH 512
+#define MAX_DIR_LENGTH 128
+char buffer[MAX_BUFFER_LENGTH];
 
 
 typedef enum{
@@ -55,7 +57,7 @@ void remove_quotes(char *str);
 int8_t find_path(char *command,int type){
 	
 	int8_t found=0;
-	if(command[0]=='\'' || command[0]=='\"' || command[0]=='%'){
+	if(command[0]=='\'' || command[0]=='\"' || command[0]=='@'){
 		remove_quotes(command);
 		curr_work_dir(0,command);
 		found=1;
@@ -103,7 +105,7 @@ void tokenisation(char **table,char *command,char *str){
 		
 		table[count]=temp;
 		count++;
-		if(count >= 65536) break;
+		if(count > MAXIMUM_COMMAND_LENGTH) break;
 
 		temp=strtok(NULL,str);
 		if(temp == str){
@@ -232,7 +234,7 @@ void file_redir(char *filename,char *input, int8_t type,int8_t err_flag){
 
 void command_runner(char *cmd){
 	//char *cmd = (char*)command;
-	char *table[SIZE];
+	char *table[MAXIMUM_COMMAND_LENGTH];
 	tokenisation(table,cmd," ");
 	if(find_path(table[0],0)){
 		pid_t pid = fork();
@@ -265,7 +267,7 @@ void print_echo(char *input){
 
 // temp solution
 		
-		char *table[SIZE];
+		char *table[MAXIMUM_COMMAND_LENGTH];
 		tokenisation(table,redirect_ptr+1,">");
 
 		//tokenisation(table,redirect_ptr+1,">> ");
@@ -303,7 +305,7 @@ void print_echo(char *input){
 }
 
 void curr_work_dir(int type, char *command){
-	char cwd[128];
+	char cwd[MAX_DIR_LENGTH];
 	if((getcwd(cwd,sizeof(cwd))!=NULL)){
 		if(type==1) printf("%s\n",cwd);
 		else sprintf(buffer,"%s/%s",cwd,command);
@@ -317,7 +319,7 @@ void remove_quotes(char *str){
 	int j=0;
 
 	while(str[i]!='\0'){
-		if(str[i] != '\'' && str[i] != '\"' && str[i]!='%'){
+		if(str[i] != '\'' && str[i] != '\"' && str[i]!='@'){
 			str[j++] = str[i];
 		}
 		i++;
@@ -336,23 +338,24 @@ int main(void){
 		
 	
 
-	char command[1024];
+	char command[MAXIMUM_COMMAND_LENGTH];
 	while(1){
-l2:
+__NO_INPUT__:
 		printf("$ ");
 
-		if(fgets(command,sizeof(command),stdin)==NULL) goto l1;
+		if(fgets(command,sizeof(command),stdin)==NULL) goto __EXIT_SHELL__;
 
 
 
-		if(command[0]=='\n') goto l2;
+
+		if(command[0]=='\n') goto __NO_INPUT__;
 
 		command[strcspn(command,"\n")]='\0';
 		
 		COMMAND cmd = command_to_emun(command);
 		switch(cmd){
 			case ex_it:
-				goto l1;
+				goto __EXIT_SHELL__;
 			case echo:
 				print_echo(command+5);
 
@@ -380,6 +383,6 @@ l2:
 
 			
 	}
-l1:
+__EXIT_SHELL__:
 	return 0;
 }
