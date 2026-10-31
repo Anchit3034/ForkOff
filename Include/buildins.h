@@ -1,9 +1,7 @@
 #ifndef BUILDIN_H
 #define BUILDIN_H
 
-#include<string.h>
-#include<stdint.h>
-#include "executor.h"
+
 
 
 typedef enum{
