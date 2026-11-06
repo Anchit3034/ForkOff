@@ -1,7 +1,7 @@
 
 #include "./../Include/buildins.h"
 #include "./../Include/executor.h"
-#include<string.h>
+//#include<string.h>
 
 #define MAXIMUM_COMMAND_LENGTH 8192
 #define MAX_BUFFER_LENGTH 512
@@ -56,6 +56,109 @@ char *trim_space(char *str){
         start[write]='\0';
         return start;
 }
+
+void printer(char* input){
+	bool is_single_quotes=false;
+	uint8_t count=0;
+	bool is_double_quotes=false;
+	bool is_backslash=false;
+	
+	for(int i=0;input[i]!='\0' && input[i]!='>';i++){
+		char curr=input[i];
+		if((input[i]=='1' || input[i]=='2') && input[i+1]=='>'){
+			break;
+		}
+
+		if((is_single_quotes && curr!='\'') || (is_double_quotes && curr!='\"') || (is_backslash )){
+			putchar(curr);
+			is_backslash=false;
+			continue;
+		}
+		QUOTING quote = quote_to_enum(curr);
+
+		switch(quote){
+			case single_q:
+				is_single_quotes = !is_single_quotes;
+				break;
+			case double_q:
+				is_double_quotes = !is_double_quotes;
+				break;
+			case backslash:
+				is_backslash=true;
+				break;
+			default:
+				if (curr!=' ' && curr!='\t'){
+					putchar(curr);
+					count=0;
+				}else{
+					if(count==0){
+						putchar(' ');
+						count=1;
+					}
+				}
+				break;
+		
+		}
+	
+	}
+	putchar('\n');
+}
+
+void file_redir(char *filename,char *input, int8_t type,int8_t err_flag){
+	
+	//const char *restrict type = (strstr(input,">>") != NULL) ? "a":"w";
+	//int8_t move = (type==(char *restrict)"a") ? 1:0;
+	//char *file = trim_space(filename+move);
+	//FILE *fptr=fopen(file,type);
+	
+	int saved_std;
+	int used_std;
+
+	if(err_flag==1){
+		saved_std = dup(STDERR_FILENO);
+		used_std = STDERR_FILENO;
+	}
+	
+	else{
+		saved_std = dup(STDOUT_FILENO);
+		used_std = STDOUT_FILENO;
+	}
+
+
+	if(saved_std<0){
+		perror("Failed to dup");
+		return;
+	}
+	int fd;
+	if(type==1) fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	
+	else fd = open(filename,O_WRONLY | O_CREAT | O_TRUNC, 0644);
+
+
+	if(fd < 0){
+		perror("failed redirecting");
+		return;
+	}
+	
+	if(dup2(fd,used_std)<0){
+		printf("dup2 failed to redirect");
+		return;
+	}
+
+	close(fd);
+	printer(input);
+
+
+	fflush(stdout);
+	//fclose(fptr);
+	if(dup2(saved_std,used_std)<0){
+		printf("dup2 failted to redir");
+		return;
+	}
+	close(saved_std);
+
+}
+
 
 
 
