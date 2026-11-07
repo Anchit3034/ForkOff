@@ -2,6 +2,11 @@
 #define BUILDIN_H
 
 
+#include "buildins.h"
+#include "includes.h"
+#include "parser.h"
+#include "executor.h"
+
 
 
 typedef enum{
@@ -23,15 +28,14 @@ typedef enum{
 
 COMMAND command_to_emun(char *str);
 
-QUOTING quote_to_enum(cahr str);
+QUOTING quote_to_enum(char str);
 
 void curr_work_dir(int type, char *command);
 void handle_type(char *command);
 char *trim_space(char *str);
 void printer(char *input);
-void file_redir(char *filename,char *input, int8_t type,int8_t err_flag);
+void file_redir(char *filename,char *input, int type,int err_flag);
 void print_echo(char *input);
-void curr_work_dir(int type, char *command);
 
 
 #endif
