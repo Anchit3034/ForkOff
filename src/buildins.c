@@ -1,8 +1,5 @@
-
-#include "./../Include/executor.h"
-#include "./../Include/buildins.h"
-
 //#include<string.h>
+#include "./../Include/buildins.h"
 
 
 
@@ -58,7 +55,7 @@ char *trim_space(char *str){
 
 void printer(char* input){
 	bool is_single_quotes=false;
-	uint8_t count=0;
+	int count=0;
 	bool is_double_quotes=false;
 	bool is_backslash=false;
 	
@@ -103,7 +100,7 @@ void printer(char* input){
 	putchar('\n');
 }
 
-void file_redir(char *filename,char *input, int8_t type,int8_t err_flag){
+void file_redir(char *filename,char *input, int type,int err_flag){
 	
 	//const char *restrict type = (strstr(input,">>") != NULL) ? "a":"w";
 	//int8_t move = (type==(char *restrict)"a") ? 1:0;
@@ -171,11 +168,11 @@ void print_echo(char *input){
 
 		//tokenisation(table,redirect_ptr+1,">> ");
 	
-		int8_t i=0;
+		int i=0;
 		while(table[i]!=NULL){
 			
-			int8_t type=0;
-			int8_t err_flag=0;
+			int type=0;
+			int err_flag=0;
 
 			if(strncmp(redirect_ptr-1,"2>",2)==0){
 				err_flag=1;

@@ -39,9 +39,9 @@ void command_runner(char *cmd){
 	return;
 }
 
-int8_t find_path(char *command,int type){
+int find_path(char *command,int type){
 	
-	int8_t found=0;
+	int found=0;
 	if(command[0]=='\'' || command[0]=='\"' || command[0]=='@'){
 		remove_quotes(command);
 		curr_work_dir(0,command);

@@ -330,13 +330,15 @@ void remove_quotes(char *str){
 
 */
 
-#include "./../Include/includes.h"
+//#include "./../Include/includes.h"
 #include "./../Include/parser.h"
 #include "./../Include/executor.h"
 #include "./../Include/buildins.h"
+char buffer[MAX_BUFFER_LENGTH];
 
 
 int main(void){
+
 
 	setbuf(stdout,NULL);
 	

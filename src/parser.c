@@ -1,4 +1,4 @@
-
+#include "./../Include/parser.h"
 
 void tokenisation(char **table,char *command,char *str){
 	if(command == str){
