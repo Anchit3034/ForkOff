@@ -1,11 +1,10 @@
 
-#include "./../Include/buildins.h"
 #include "./../Include/executor.h"
+#include "./../Include/buildins.h"
+
 //#include<string.h>
 
-#define MAXIMUM_COMMAND_LENGTH 8192
-#define MAX_BUFFER_LENGTH 512
-#define MAX_DIR_LENGTH 128
+
 
 
 COMMAND command_to_emun(char *str){

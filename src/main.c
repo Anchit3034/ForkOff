@@ -1,4 +1,4 @@
-#include<stdio.h>
+/*#include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
 #include<unistd.h>
@@ -327,6 +327,13 @@ void remove_quotes(char *str){
 	str[j]='\0';
 }
 
+
+*/
+
+#include "./../Include/includes.h"
+#include "./../Include/parser.h"
+#include "./../Include/executor.h"
+#include "./../Include/buildins.h"
 
 
 int main(void){
