@@ -159,6 +159,50 @@ void file_redir(char *filename,char *input, int8_t type,int8_t err_flag){
 
 }
 
+void print_echo(char *input){
+
+
+	char *redirect_ptr = strchr(input,'>');
+	if(redirect_ptr!=NULL){
+
+// temp solution
+		
+		char *table[MAXIMUM_COMMAND_LENGTH];
+		tokenisation(table,redirect_ptr+1,">");
+
+		//tokenisation(table,redirect_ptr+1,">> ");
+	
+		int8_t i=0;
+		while(table[i]!=NULL){
+			
+			int8_t type=0;
+			int8_t err_flag=0;
+
+			if(strncmp(redirect_ptr-1,"2>",2)==0){
+				err_flag=1;
+			}
+
+			if(strncmp(redirect_ptr,">>",2)==0){
+				type = 1;
+				redirect_ptr += strlen(table[i]);
+			}
+			trim_space(table[i]);
+			file_redir(table[i++],input,type,err_flag);
+			
+		}
+		
+
+
+//temp solution
+	}else{
+		printer(input);
+
+	}
+	return;
+		
+	
+
+}
 
 
 
