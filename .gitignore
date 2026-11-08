@@ -1,5 +1,5 @@
 
 ForkOff
-
+*.o
 *.out
 vgcore.206958
