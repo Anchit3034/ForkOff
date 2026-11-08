@@ -20,8 +20,8 @@ It was built from scratch as a hands-on systems programming project, applying co
 > *"Busy, I am. Slowly working on this, I progress."* 🧙‍♂️
 
 - [x] Single-file REPL engine and POSIX process execution loop.
-- [/] **In Progress:** Modularizing the codebase into a clean multi-file structure (`parser.c`, `builtins.c`, `exec.c`).
-- [ ] **Next:** Implementing I/O redirection (`>`, `<`) via `dup2()`.
+- [x] Modularizing the codebase into a clean multi-file structure (`parser.c`, `builtins.c`, `exec.c`).
+- [/] **In Progress:** Implementing I/O redirection (`>`, `<`) via `dup2()`.
 - [ ] **Next:** Multi-stage command pipelines (`|`) via `pipe()`.
 - [ ] **Next:** Robust signal handling (`SIGINT`, `SIGTSTP`).
 
