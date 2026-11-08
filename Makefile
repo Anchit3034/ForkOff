@@ -1,28 +1,27 @@
 
-CFLAGS = -Wall -Wextra -pedantic -std=c2x -Wno-implicit-function-declaration
-
+CFLAGS = -Wall -Wextra -pedantic -std=c2x 
 all: ForkOff
 
 	
 
-ForkOff: ./src/buildins.o ./src/executor.o ./src/parser.o ./src/main.o 
-	gcc $(CFLAGS) ./src/main.o ./src/buildins.o ./src/executor.o ./src/parser.o -o ForkOff
+ForkOff: buildins.o executor.o parser.o main.o 
+	gcc $(CFLAGS) main.o buildins.o executor.o parser.o -o ForkOff
 
-./src/main.o : ./src/main.c
-	gcc $(CFLAGS) ./src/main.c -c ./src/main.o
+main.o : ./src/main.c
+	gcc $(CFLAGS) -c ./src/main.c 
 
-./src/buildins.o : ./src/buildins.c
-	gcc $(CFLAGS) ./src/buildins.c -c ./src/buildins.o
+buildins.o : ./src/buildins.c
+	gcc $(CFLAGS) -c ./src/buildins.c 
 
-./src/executor.o : ./src/executor.c
-	gcc $(CFLAGS) ./src/executor.c -c ./src/executor.o
+executor.o : ./src/executor.c
+	gcc $(CFLAGS) -c ./src/executor.c
 
-./src/parser.o : ./src/parser.c
-	gcc $(CFLAGS) ./src/parser.c -c ./src/parser.o
+parser.o : ./src/parser.c
+	gcc $(CFLAGS) -c ./src/parser.c
 
 
 
 
 
 clean:
-	rm -f ./src/*.o
+	rm -f *.o
