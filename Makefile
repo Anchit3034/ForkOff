@@ -1,6 +1,7 @@
-
 CFLAGS = -Wall -Wextra -pedantic -std=c2x 
-all: ForkOff
+
+.PHONY: all
+all: ForkOff clean
 
 	
 
