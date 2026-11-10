@@ -6,19 +6,19 @@ all: ForkOff clean
 	
 
 ForkOff: buildins.o executor.o parser.o main.o 
-	gcc $(CFLAGS) main.o buildins.o executor.o parser.o -o ForkOff
+	gcc $(CFLAGS) $^ -o ForkOff
 
 main.o : ./src/main.c
-	gcc $(CFLAGS) -c ./src/main.c 
+	gcc $(CFLAGS) -c $<
 
 buildins.o : ./src/buildins.c
-	gcc $(CFLAGS) -c ./src/buildins.c 
+	gcc $(CFLAGS) -c $<
 
 executor.o : ./src/executor.c
-	gcc $(CFLAGS) -c ./src/executor.c
+	gcc $(CFLAGS) -c $<
 
 parser.o : ./src/parser.c
-	gcc $(CFLAGS) -c ./src/parser.c
+	gcc $(CFLAGS) -c $<
 
 
 
