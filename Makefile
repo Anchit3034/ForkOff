@@ -6,7 +6,7 @@ all: ForkOff clean
 	
 
 ForkOff: buildins.o executor.o parser.o main.o 
-	gcc $(CFLAGS) $^ -o ForkOff
+	gcc $(CFLAGS) $^ -o $@
 
 main.o : ./src/main.c
 	gcc $(CFLAGS) -c $<

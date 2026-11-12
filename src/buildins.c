@@ -53,7 +53,7 @@ char *trim_space(char *str){
         return start;
 }
 
-void printer(char* input){
+void printer_echo(char* input){
 	bool is_single_quotes=false;
 	int count=0;
 	bool is_double_quotes=false;
@@ -142,7 +142,7 @@ void file_redir(char *filename,char *input, int type,int err_flag){
 	}
 
 	close(fd);
-	printer(input);
+	printer_echo(input);
 
 
 	fflush(stdout);
@@ -171,7 +171,7 @@ void print_echo(char *input){
 		int i=0;
 		while(table[i]!=NULL){
 			
-			int type=0;
+			int type=0; //for type 1 for append 0 ,for write only
 			int err_flag=0;
 
 			if(strncmp(redirect_ptr-1,"2>",2)==0){
@@ -191,7 +191,7 @@ void print_echo(char *input){
 
 //temp solution
 	}else{
-		printer(input);
+		printer_echo(input);
 
 	}
 	return;
