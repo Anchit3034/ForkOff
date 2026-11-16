@@ -155,6 +155,17 @@ void file_redir(char *filename,char *input, int type,int err_flag){
 
 }
 
+void redir_signal(char **redir_ptr,char *file_name,int *type,int *err_flag){
+	if(strncmp(*redir_ptr-1,"2>",2)==0){
+		*err_flag=1;
+	}
+	if(strncmp(*redir_ptr,">>",2)==0){
+		*type = 1;
+	}
+	*redir_ptr += strlen(file_name);
+
+}
+
 void print_echo(char *input){
 
 
@@ -174,7 +185,7 @@ void print_echo(char *input){
 			int type=0; //for type 1 for append 0 ,for write only
 			int err_flag=0;
 
-			if(strncmp(redirect_ptr-1,"2>",2)==0){
+			/*if(strncmp(redirect_ptr-1,"2>",2)==0){
 				err_flag=1;
 			}
 
@@ -182,6 +193,8 @@ void print_echo(char *input){
 				type = 1;
 				redirect_ptr += strlen(table[i]);
 			}
+			*/
+			redir_signal(&redirect_ptr,table[i],&type,&err_flag);
 			trim_space(table[i]);
 			file_redir(table[i++],input,type,err_flag);
 			
