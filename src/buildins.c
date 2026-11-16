@@ -102,11 +102,6 @@ void printer_echo(char* input){
 
 void file_redir(char *filename,char *input, int type,int err_flag){
 	
-	//const char *restrict type = (strstr(input,">>") != NULL) ? "a":"w";
-	//int8_t move = (type==(char *restrict)"a") ? 1:0;
-	//char *file = trim_space(filename+move);
-	//FILE *fptr=fopen(file,type);
-	
 	int saved_std;
 	int used_std;
 
@@ -146,7 +141,6 @@ void file_redir(char *filename,char *input, int type,int err_flag){
 
 
 	fflush(stdout);
-	//fclose(fptr);
 	if(dup2(saved_std,used_std)<0){
 		printf("dup2 failted to redir");
 		return;
@@ -185,15 +179,6 @@ void print_echo(char *input){
 			int type=0; //for type 1 for append 0 ,for write only
 			int err_flag=0;
 
-			/*if(strncmp(redirect_ptr-1,"2>",2)==0){
-				err_flag=1;
-			}
-
-			if(strncmp(redirect_ptr,">>",2)==0){
-				type = 1;
-				redirect_ptr += strlen(table[i]);
-			}
-			*/
 			redir_signal(&redirect_ptr,table[i],&type,&err_flag);
 			trim_space(table[i]);
 			file_redir(table[i++],input,type,err_flag);
