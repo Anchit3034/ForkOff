@@ -17,6 +17,30 @@
 #define MAX_DIR_LENGTH 128
 extern char buffer[MAX_BUFFER_LENGTH];
 
+typedef enum{
+	echo=0,
+	ex_it,
+	cd,
+	pwd,
+	type,
+	de_fault
+}COMMAND;
+
+
+typedef enum{
+	normal=0,
+	single_q,
+	double_q,
+	backslash
+}QUOTING;
+
+typedef enum{
+	WRITE,
+	ERROR,
+	NO_ERR,
+	APPEND,
+
+}TAG_OP;
 
 int main(void);
 

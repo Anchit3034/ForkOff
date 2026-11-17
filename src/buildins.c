@@ -100,12 +100,12 @@ void printer_echo(char* input){
 	putchar('\n');
 }
 
-void file_redir(char *filename,char *input, int type,int err_flag){
+void file_redir(char *filename,char *input, TAG_OP type,TAG_OP err_flag){
 	
 	int saved_std;
 	int used_std;
 
-	if(err_flag==1){
+	if(err_flag==ERROR){
 		saved_std = dup(STDERR_FILENO);
 		used_std = STDERR_FILENO;
 	}
@@ -121,7 +121,7 @@ void file_redir(char *filename,char *input, int type,int err_flag){
 		return;
 	}
 	int fd;
-	if(type==1) fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	if(type==APPEND) fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	
 	else fd = open(filename,O_WRONLY | O_CREAT | O_TRUNC, 0644);
 
@@ -149,12 +149,12 @@ void file_redir(char *filename,char *input, int type,int err_flag){
 
 }
 
-void redir_signal(char **redir_ptr,char *file_name,int *type,int *err_flag){
+void redir_signal(char **redir_ptr,char *file_name,TAG_OP *type,TAG_OP *err_flag){
 	if(strncmp(*redir_ptr-1,"2>",2)==0){
-		*err_flag=1;
+		*err_flag=ERROR;
 	}
 	if(strncmp(*redir_ptr,">>",2)==0){
-		*type = 1;
+		*type = APPEND;
 	}
 	*redir_ptr += strlen(file_name);
 
@@ -176,8 +176,8 @@ void print_echo(char *input){
 		int i=0;
 		while(table[i]!=NULL){
 			
-			int type=0; //for type 1 for append 0 ,for write only
-			int err_flag=0;
+			TAG_OP type=WRITE; //for type 1 for append 0 ,for write only
+			TAG_OP err_flag=NO_ERR;
 
 			redir_signal(&redirect_ptr,table[i],&type,&err_flag);
 			trim_space(table[i]);
