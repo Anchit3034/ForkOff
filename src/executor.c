@@ -44,7 +44,7 @@ int find_path(char *command,int type){
 	int found=0;
 	if(command[0]=='\'' || command[0]=='\"' || command[0]=='@'){
 		remove_quotes(command);
-		curr_work_dir(0,command);
+		curr_work_dir(LOCAL_EXECUTION,command);
 		found=1;
 	}
 	else{

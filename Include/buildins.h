@@ -13,7 +13,7 @@ COMMAND command_to_emun(char *str);
 
 QUOTING quote_to_enum(char str);
 
-void curr_work_dir(int type, char *command);
+void curr_work_dir(TYPE_PWD_EXE type, char *command);
 void handle_type(char *command);
 char *trim_space(char *str);
 void printer(char *input);

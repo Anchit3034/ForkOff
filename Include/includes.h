@@ -26,6 +26,10 @@ typedef enum{
 	de_fault
 }COMMAND;
 
+typedef enum{
+	PWD,
+	LOCAL_EXECUTION,
+}TYPE_PWD_EXE;
 
 typedef enum{
 	normal=0,

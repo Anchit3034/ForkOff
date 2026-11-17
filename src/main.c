@@ -40,7 +40,7 @@ __NO_INPUT__:
 				break;
 			case pwd:
 
-				curr_work_dir(1,NULL);
+				curr_work_dir(PWD,NULL);
 				break;
 			case type:
 				handle_type(command+5);

@@ -20,10 +20,10 @@ QUOTING quote_to_enum(char str){
 	return normal;
 }
 
-void curr_work_dir(int type, char *command){    
-        char cwd[MAX_DIR_LENGTH];
+void curr_work_dir(TYPE_PWD_EXE type, char *command){    
+        char cwd[MAX_DIR_LENGTH]; //use enum the here
         if((getcwd(cwd,sizeof(cwd))!=NULL)){
-                if(type==1) printf("%s\n",cwd);
+                if(type==PWD) printf("%s\n",cwd);
                 else sprintf(buffer,"%s/%s",cwd,command);
         }
         else perror("getcwd error");
