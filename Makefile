@@ -11,14 +11,14 @@ ForkOff: buildins.o executor.o parser.o main.o
 main.o : ./src/main.c
 	gcc $(CFLAGS) -c $<
 
-buildins.o : ./src/buildins.c
-	gcc $(CFLAGS) -c $<
+buildins.o : ./src/buildins.c ./Include/buildins.h ./Include/includes.h
+	gcc $(CFLAGS) -c $^
 
-executor.o : ./src/executor.c
-	gcc $(CFLAGS) -c $<
+executor.o : ./src/executor.c ./Include/executor.h ./Include/includes.h
+	gcc $(CFLAGS) -c $^
 
-parser.o : ./src/parser.c
-	gcc $(CFLAGS) -c $<
+parser.o : ./src/parser.c ./Include/parser.h ./Include/includes.h
+	gcc $(CFLAGS) -c $^
 
 
 
@@ -26,3 +26,4 @@ parser.o : ./src/parser.c
 
 clean:
 	rm -f *.o
+	rm -f ./Include/*.gch
