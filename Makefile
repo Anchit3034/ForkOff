@@ -8,8 +8,8 @@ all: ForkOff clean
 ForkOff: buildins.o executor.o parser.o main.o 
 	gcc $(CFLAGS) $^ -o $@
 
-main.o : ./src/main.c
-	gcc $(CFLAGS) -c $<
+main.o : ./src/main.c ./Include/includes.h
+	gcc $(CFLAGS) -c $^
 
 buildins.o : ./src/buildins.c ./Include/buildins.h ./Include/includes.h
 	gcc $(CFLAGS) -c $^
