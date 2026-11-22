@@ -1,7 +1,9 @@
+
 CFLAGS = -Wall -Wextra -pedantic -std=c2x 
 
 .PHONY: all
-all: ForkOff clean
+
+all: ForkOff clean execute
 
 	
 
@@ -20,10 +22,12 @@ executor.o : ./src/executor.c ./Include/executor.h ./Include/includes.h
 parser.o : ./src/parser.c ./Include/parser.h ./Include/includes.h
 	gcc $(CFLAGS) -c $^
 
-
-
-
-
 clean:
 	rm -f *.o
 	rm -f ./Include/*.gch
+
+execute :
+	./ForkOff
+
+
+
