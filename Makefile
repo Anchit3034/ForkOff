@@ -1,12 +1,16 @@
-
+DEBUG ?= 0
 CFLAGS = -Wall -Wextra -pedantic -std=c2x 
 
+ifeq ($(DEBUG),1)
+	NEED = ForkOff clean Valgrind_check
+else
+	NEED = ForkOff clean execute
+
+endif
+
 .PHONY: all
-
-all: ForkOff clean execute
-
 	
-
+all : $(NEED)
 ForkOff: buildins.o executor.o parser.o main.o 
 	gcc $(CFLAGS) $^ -o $@
 
@@ -28,6 +32,9 @@ clean:
 
 execute :
 	./ForkOff
+
+Valgrind_check:
+	valgrind --leak-check=full --show-leak-kinds=all ./ForkOff
 
 
 
