@@ -35,7 +35,10 @@ __NO_INPUT__:
 			case ex_it:
 				goto __EXIT_SHELL__;
 			case echo:
-				print_echo(command+5);
+				if(redir_checker(command+5));
+				else printer_echo(command+5);
+
+				//print_echo(command+5);
 
 				break;
 			case pwd:

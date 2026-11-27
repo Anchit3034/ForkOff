@@ -16,11 +16,11 @@ QUOTING quote_to_enum(char str);
 void curr_work_dir(TYPE_PWD_EXE type, char *command);
 void handle_type(char *command);
 char *trim_space(char *str);
-void printer(char *input);
+void printer_echo(char *input);
 void file_redir(char *filename,char *input, TAG_OP type,TAG_OP err_flag);
 void print_echo(char *input);
 
-
+bool redir_checker(char *input);
 #endif
 
 

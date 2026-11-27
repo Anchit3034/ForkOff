@@ -187,8 +187,8 @@ bool redir_checker(char *input){
 	return false;
 }
 
-
-void print_echo(char *input){
+// refactoring##
+/*void print_echo(char *input){
 
 
 	if(redir_checker(input));
@@ -200,7 +200,9 @@ void print_echo(char *input){
 		
 	
 
-}
+}*/
+
+
 
 
 
