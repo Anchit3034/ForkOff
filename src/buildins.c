@@ -160,9 +160,7 @@ void redir_signal(char **redir_ptr,char *file_name,TAG_OP *type,TAG_OP *err_flag
 
 }
 
-void print_echo(char *input){
-
-
+bool redir_checker(char *input){
 	char *redirect_ptr = strchr(input,'>');
 	if(redirect_ptr!=NULL){
 
@@ -184,11 +182,17 @@ void print_echo(char *input){
 			file_redir(table[i++],input,type,err_flag);
 			
 		}
-		
+		return true;
+	}
+	return false;
+}
 
 
-//temp solution
-	}else{
+void print_echo(char *input){
+
+
+	if(redir_checker(input));
+	else{
 		printer_echo(input);
 
 	}

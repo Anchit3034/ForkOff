@@ -1,6 +1,7 @@
 DEBUG ?= 0
 CFLAGS = -Wall -Wextra -pedantic -std=c2x 
 
+
 ifeq ($(DEBUG),1)
 	NEED = ForkOff clean Valgrind_check
 else
